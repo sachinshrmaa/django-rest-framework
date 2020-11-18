@@ -63,3 +63,22 @@ def post_delete_api(request, pk):
         return HttpResponse(status=204)
 
 
+@api_view(['PUT'])
+def post_update_api(request, pk):
+    """
+    Post Update/Edit API.
+    """
+    try:
+        post = Post.objects.get(pk=pk)
+        
+    except Post.DoesNotExist:
+        return HttpResponse(status=404)
+
+    if request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = PostSerializer(post, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors, status=400)
+
